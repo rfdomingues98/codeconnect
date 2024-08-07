@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
+import scrollbar from "tailwind-scrollbar";
 import animate from "tailwindcss-animate";
 
 import base from "./base";
@@ -36,5 +38,9 @@ export default {
       },
     },
   },
-  plugins: [animate],
+  plugins: [
+    animate,
+    typography,
+    scrollbar({ nocompatible: true, preferredStrategy: "pseudoelements" }),
+  ],
 } satisfies Config;

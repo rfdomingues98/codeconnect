@@ -23,8 +23,10 @@
     "@codeconnect/eslint-config": "workspace:*",
     "@codeconnect/prettier-config": "workspace:*",
     "@codeconnect/tsconfig": "workspace:*",
+    "@tailwindcss/typography": "^0.5.13",
     "eslint": "catalog:",
     "prettier": "catalog:",
+    "tailwind-scrollbar": "^3.1.0",
     "typescript": "catalog:"
   },
   "prettier": "@codeconnect/prettier-config"
