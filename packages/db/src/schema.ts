@@ -1,9 +1,11 @@
 import { relations, sql } from "drizzle-orm";
 import {
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
+  time,
   timestamp,
   uuid,
   varchar,
@@ -44,6 +46,7 @@ export const User = pgTable("user", {
 
 export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
+  challenges: many(Challenges),
 }));
 
 export const Account = pgTable(
@@ -90,3 +93,65 @@ export const Session = pgTable("session", {
 export const SessionRelations = relations(Session, ({ one }) => ({
   user: one(User, { fields: [Session.userId], references: [User.id] }),
 }));
+
+export const DifficultyEnum = pgEnum("difficulty", ["easy", "medium", "hard"]);
+
+export const Challenges = pgTable("challenges", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  slug: varchar("slug", { length: 256 }).notNull().unique(),
+  title: varchar("title", { length: 256 }).notNull(),
+  description: text("description").notNull(),
+  initialCode: text("initialCode").notNull(),
+  authorId: uuid("authorId").references(() => User.id, {
+    onDelete: "set null",
+  }),
+  duration: time("duration"),
+  difficulty: DifficultyEnum("difficulty").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const ChallengeRelations = relations(Challenges, ({ one, many }) => ({
+  author: one(User, { fields: [Challenges.authorId], references: [User.id] }),
+  outputTests: many(OutputTests),
+}));
+
+export const OutputTests = pgTable("output_tests", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  code: text("code").notNull(),
+  expectedOutput: text("expectedOutput").notNull(),
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id),
+});
+
+export const OutputTestsRelations = relations(OutputTests, ({ one }) => ({
+  challenge: one(Challenges, {
+    fields: [OutputTests.challengeId],
+    references: [Challenges.id],
+  }),
+}));
+
+export const PerformanceTests = pgTable("performance_tests", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  code: text("code").notNull(),
+  executionTime: text("executionTime").notNull(),
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id),
+});
+
+export const PerformanceTestsRelations = relations(
+  PerformanceTests,
+  ({ one }) => ({
+    challenge: one(Challenges, {
+      fields: [PerformanceTests.challengeId],
+      references: [Challenges.id],
+    }),
+  }),
+);
+
+// export const ChallengeSubmissions = pgTable("challenge_submissions", {});

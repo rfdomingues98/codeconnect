@@ -39,6 +39,10 @@
       "cache": false,
       "persistent": true
     },
+    "diagram": {
+      "cache": false,
+      "persistent": true
+    },
     "ui-add": {
       "cache": false,
       "interactive": true
