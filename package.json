@@ -14,6 +14,7 @@
     "db:diagram": "turbo -F @codeconnect/db diagram",
     "dev": "turbo watch dev",
     "dev:next": "turbo watch dev -F @codeconnect/nextjs...",
+    "dev:api": "turbo watch dev -F @codeconnect/challenge-api...",
     "format": "turbo run format --continue -- --cache --cache-location node_modules/.cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location node_modules/.cache/.prettiercache",
     "lint": "turbo run lint --continue -- --cache --cache-location node_modules/.cache/.eslintcache",
@@ -21,7 +22,8 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
-    "ui-add": "turbo run ui-add"
+    "ui-add": "turbo run ui-add",
+    "start:api": "turbo run -F @codeconnect/challenge-api start"
   },
   "devDependencies": {
     "@codeconnect/prettier-config": "workspace:*",
