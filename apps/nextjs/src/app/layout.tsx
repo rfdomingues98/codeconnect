@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { cn } from "@codeconnect/ui";
-import { ThemeProvider, ThemeToggle } from "@codeconnect/ui/theme";
-import { Toaster } from "@codeconnect/ui/toast";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+
+import { cn } from "@codeconnect/ui";
+import { ThemeProvider } from "@codeconnect/ui/theme";
+import { Toaster } from "@codeconnect/ui/toast";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -44,27 +45,22 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn("scrollbar-thumb-zinc-700 scrollbar-track-background")}
+      className={cn("scrollbar-track-background scrollbar-thumb-primary/50")}
       suppressHydrationWarning
     >
       <body
         className={cn(
-          "flex h-screen flex-col bg-background font-sans text-foreground antialiased",
+          "flex h-screen flex-col bg-background font-sans text-foreground",
           GeistSans.variable,
           GeistMono.variable,
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          themes={["dark"]}
-          enableSystem
-        >
+        <ThemeProvider attribute="class" enableSystem>
           <Navbar />
           <TRPCReactProvider>{props.children}</TRPCReactProvider>
-          <div className="absolute bottom-4 right-4">
+          {/* <div className="absolute bottom-4 right-4">
             <ThemeToggle />
-          </div>
+          </div> */}
           <Toaster />
         </ThemeProvider>
       </body>

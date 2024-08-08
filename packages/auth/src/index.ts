@@ -3,13 +3,14 @@ import NextAuth from "next-auth";
 import { authConfig } from "./config";
 
 export type { Session } from "next-auth";
+export { useSession } from "next-auth/react";
 
 const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
 
-export { handlers, auth, signIn, signOut };
+export { auth, handlers, signIn, signOut };
 
 export {
   invalidateSessionToken,
-  validateToken,
   isSecureContext,
+  validateToken,
 } from "./config";
