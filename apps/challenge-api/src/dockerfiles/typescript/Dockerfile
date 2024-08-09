@@ -8,6 +8,3 @@ WORKDIR /usr/src/app
 RUN corepack enable
 RUN pnpm init
 RUN pnpm add -D typescript tsx vitest
-
-# Command to run the script
-# CMD /bin/sh -c 'echo "$CODE" > index.ts && echo "$TESTS" > index.test.ts && \ pnpm vitest run

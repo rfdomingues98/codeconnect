@@ -1,10 +1,7 @@
-import { PassThrough } from "stream";
-
 export function cleanDockerLogs(
   stream: NodeJS.ReadableStream,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const passThrough = new PassThrough();
     let logs = "";
 
     stream.on("data", (chunk: Buffer) => {

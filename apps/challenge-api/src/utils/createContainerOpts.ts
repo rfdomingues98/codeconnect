@@ -25,7 +25,7 @@ export const containerConfigs: Record<
       "/bin/sh",
       "-c",
       `echo "$CODE" > index.ts && echo "$TESTS" > index.test.ts && \
-  pnpm vitest run`,
+  pnpm vitest run --reporter=json`,
     ], // Assume 'index.ts' is the entry point
     WorkingDir: "/usr/src/app",
   }),

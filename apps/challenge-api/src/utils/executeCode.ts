@@ -7,7 +7,7 @@ import { containerConfigs } from "./createContainerOpts";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
-const dockerfilePath = path.resolve(__dirname, "..", "dockerfiles");
+const dockerfilePath = path.resolve(__dirname, "dockerfiles");
 export async function executeCode(
   docker: Dockerode,
   code: string,
