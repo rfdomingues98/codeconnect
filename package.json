@@ -23,6 +23,7 @@
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
+    "build:api": "turbo run build -F @codeconnect/challenge-api",
     "start:api": "turbo run -F @codeconnect/challenge-api start"
   },
   "devDependencies": {
