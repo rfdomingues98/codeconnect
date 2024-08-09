@@ -76,6 +76,8 @@ app.post("/", async (c) => {
   });
 });
 
+app.get("/health", async (c) => c.status(200));
+
 const port = +(process.env.PORT ?? 3001);
 console.log(`Server is running on port ${port}`);
 
