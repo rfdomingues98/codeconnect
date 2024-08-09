@@ -2,18 +2,20 @@
   "name": "@codeconnect/challenge-api",
   "type": "module",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/index.cjs",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc"
+    "build": "tsup"
   },
   "dependencies": {
     "@hono/node-server": "^1.12.0",
     "dockerode": "^4.0.2",
-    "hono": "^4.5.4"
+    "hono": "^4.5.4",
+    "@codeconnect/validators": "workspace:*"
   },
   "devDependencies": {
     "@types/dockerode": "^3.3.31",
     "@types/node": "^20.14.9",
+    "tsup": "^8.2.4",
     "tsx": "^4.7.1"
   }
 }

@@ -6,3 +6,9 @@ export const unused = z.string().describe(
    with back and frontend, you can put them in here
   `,
 );
+
+export const CodeSubmitSchema = z.object({
+  code: z.coerce.string(),
+  language: z.union([z.literal("python"), z.literal("typescript")]),
+  tests: z.coerce.string(),
+});

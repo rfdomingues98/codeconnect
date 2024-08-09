@@ -1,14 +1,16 @@
-import fs from "fs";
-import path from "path";
 import { serve } from "@hono/node-server";
 import Dockerode from "dockerode";
 import { Hono } from "hono";
 import { streamText } from "hono/streaming";
 
+import { CodeSubmitSchema } from "@codeconnect/validators";
+
+import { executeCode } from "./utils/executeCode";
+
 const app = new Hono();
 const docker = new Dockerode();
 
-async function executePythonCode(code: string): Promise<NodeJS.ReadableStream> {
+/* async function executePythonCode(code: string): Promise<NodeJS.ReadableStream> {
   const tempDir = path.join(__dirname, "temp");
   const filePath = path.join(tempDir, "script.py");
 
@@ -61,17 +63,20 @@ async function executePythonCode(code: string): Promise<NodeJS.ReadableStream> {
   await container.wait();
 
   return logs;
-}
+} */
 
-app.get("/", async (c) => {
-  const output = await executePythonCode(`print("Hello world")\n`);
+app.post("/", async (c) => {
+  const body = await c.req.json();
+
+  const { code, language, tests } = CodeSubmitSchema.parse(body);
+  const output = await executeCode(docker, code, language, tests);
+  if (!output) return c.status(400);
   return streamText(c, async (stream) => {
-    const chunk = output.read();
-    await stream.write(chunk.slice(8)); // for some reason it returns some weird characters for the 8 first bytes
+    await stream.write(output); // for some reason it returns some weird characters for the 8 first bytes
   });
 });
 
-const port = +(process.env.PORT ?? 3000);
+const port = +(process.env.PORT ?? 3001);
 console.log(`Server is running on port ${port}`);
 
 serve({
