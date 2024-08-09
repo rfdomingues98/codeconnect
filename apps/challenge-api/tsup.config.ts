@@ -7,7 +7,13 @@ export default defineConfig({
   outDir: "dist",
   clean: true,
   format: ["esm"],
-  external: ["@hono/node-server", "hono", "dockerode"],
+  external: [
+    "@hono/node-server",
+    "hono",
+    "dockerode",
+    "@codeconnect/validators",
+    "typescript",
+  ],
   esbuildPlugins: [
     copy({
       // this is equal to process.cwd(), which means we use cwd path as base path to resolve `to` path
