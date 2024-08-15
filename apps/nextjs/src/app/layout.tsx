@@ -11,7 +11,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import "~/app/globals.css";
 
 import { env } from "~/env";
-import { Navbar } from "./_components/navbar";
+import { EditorStoreProvider } from "~/providers/editor-store-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -19,10 +19,10 @@ export const metadata: Metadata = {
       ? "https://turbo.t3.gg"
       : "http://localhost:3000",
   ),
-  title: "Create T3 Turbo",
+  title: "Code Connect",
   description: "Simple monorepo with shared backend for web & mobile apps",
   openGraph: {
-    title: "Create T3 Turbo",
+    title: "Code Connect",
     description: "Simple monorepo with shared backend for web & mobile apps",
     url: "https://create-t3-turbo.vercel.app",
     siteName: "Create T3 Turbo",
@@ -50,17 +50,15 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     >
       <body
         className={cn(
-          "flex h-screen flex-col bg-background font-sans text-foreground",
+          "bg-background font-sans text-foreground",
           GeistSans.variable,
           GeistMono.variable,
         )}
       >
         <ThemeProvider attribute="class" enableSystem>
-          <Navbar />
-          <TRPCReactProvider>{props.children}</TRPCReactProvider>
-          {/* <div className="absolute bottom-4 right-4">
-            <ThemeToggle />
-          </div> */}
+          <TRPCReactProvider>
+            <EditorStoreProvider>{props.children}</EditorStoreProvider>
+          </TRPCReactProvider>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -65,3 +65,11 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+.cm-scroller {
+  @apply scrollbar scrollbar-w-3;
+}
+
+.cm-focused {
+  outline: none !important;
+}

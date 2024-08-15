@@ -10,8 +10,8 @@ import {
 export function LanguageSelector() {
   return (
     <Select>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a Language" />
+      <SelectTrigger className="w-[160px]">
+        <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent className="max-h-48">
         <SelectItem value="js">

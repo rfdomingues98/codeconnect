@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+// @ts-expect-error this package does not provide type definitions
+import gridAreas from "@savvywombat/tailwindcss-grid-areas";
 import typography from "@tailwindcss/typography";
 import scrollbar from "tailwind-scrollbar";
 import animate from "tailwindcss-animate";
@@ -42,5 +44,6 @@ export default {
     animate,
     typography,
     scrollbar({ nocompatible: true, preferredStrategy: "pseudoelements" }),
+    gridAreas,
   ],
 } satisfies Config;

@@ -1,9 +1,22 @@
 import type { ComponentProps } from "react";
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   ChevronDownIcon,
+  ChevronRightIcon,
+  DocumentIcon,
+  FolderIcon,
+  FolderOpenIcon,
+  MicrophoneIcon,
+  PhoneIcon,
+  PhoneXMarkIcon,
   PlayIcon,
   UserIcon,
+  VideoCameraIcon,
+  VideoCameraSlashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { VscCaseSensitive, VscRegex, VscWholeWord } from "react-icons/vsc";
 
 type Props = ComponentProps<typeof PlayIcon>;
 function IconShellSolid(props: Props) {
@@ -18,7 +31,7 @@ function IconShellSolid(props: Props) {
     />
   );
 }
-function _IconShellOutline(props: Props) {
+function IconShellOutline(props: Props) {
   return (
     <svg
       width="24"
@@ -35,9 +48,41 @@ function _IconShellOutline(props: Props) {
 }
 
 export const icons = {
+  Logo: (props: Props & { theme: "light" | "dark" }) => (
+    <IconShellOutline {...props} viewBox="0 0 470 516">
+      {props.theme === "light" ? (
+        <path
+          d="M53 169.5L5 197.5M53 169.5L235 274M53 169.5V113.5M5 197.5V254.5L135.5 329V369.5M5 197.5L183.5 300.5V510M5 351L135.5 426.5V369.5M5 351V405L183.5 510M5 351L53 323.5L135.5 369.5M183.5 510L235 482.5M235 274V482.5M235 274L414 169.5M235 482.5L282.5 510M282.5 510L333.5 482.5V329L364.5 311.478M282.5 510V300.5L464.5 197.5M414 435.5V283.5L364.5 311.478M414 435.5L364.5 405V311.478M414 435.5L464.5 405V197.5M464.5 197.5L414 169.5M414 169.5V113.5M53 113.5L235 218L414 113.5M53 113.5L235 6L282.5 36.5M414 113.5L364.5 83.5L235 164L198.5 142.813M282.5 36.5L148 113.5L198.5 142.813M282.5 36.5V95.5L198.5 142.813"
+          stroke="#7936EC"
+          strokeWidth="20"
+        />
+      ) : (
+        <path
+          d="M53 169.5L5 197.5M53 169.5L235 274M53 169.5V113.5M5 197.5V254.5L135.5 329V369.5M5 197.5L183.5 300.5V510M5 351L135.5 426.5V369.5M5 351V405L183.5 510M5 351L53 323.5L135.5 369.5M183.5 510L235 482.5M235 274V482.5M235 274L414 169.5M235 482.5L282.5 510M282.5 510L333.5 482.5V329L364.5 311.478M282.5 510V300.5L464.5 197.5M414 435.5V283.5L364.5 311.478M414 435.5L364.5 405V311.478M414 435.5L464.5 405V197.5M464.5 197.5L414 169.5M414 169.5V113.5M53 113.5L235 218L414 113.5M53 113.5L235 6L282.5 36.5M414 113.5L364.5 83.5L235 164L198.5 142.813M282.5 36.5L148 113.5L198.5 142.813M282.5 36.5V95.5L198.5 142.813"
+          stroke="#CBA6F7"
+          strokeWidth="20"
+        />
+      )}
+    </IconShellOutline>
+  ),
   Play: (props: Props) => <PlayIcon {...props} />,
   User: (props: Props) => <UserIcon {...props} />,
   ChevronDown: (props: Props) => <ChevronDownIcon {...props} />,
+  ChevronRightIcon: (props: Props) => <ChevronRightIcon {...props} />,
+  VideoCamera: (props: Props) => <VideoCameraIcon {...props} />,
+  VideoCameraSlashIcon: (props: Props) => <VideoCameraSlashIcon {...props} />,
+  MicrophoneIcon: (props: Props) => <MicrophoneIcon {...props} />,
+  PhoneIcon: (props: Props) => <PhoneIcon {...props} />,
+  PhoneXMarkIcon: (props: Props) => <PhoneXMarkIcon {...props} />,
+  FolderIcon: (props: Props) => <FolderIcon {...props} />,
+  FolderOpenIcon: (props: Props) => <FolderOpenIcon {...props} />,
+  DocumentIcon: (props: Props) => <DocumentIcon {...props} />,
+  CloseIcon: (props: Props) => <XMarkIcon {...props} />,
+  CaseSensitiveIcon: (props: Props) => <VscCaseSensitive {...props} />,
+  RegExIcon: (props: Props) => <VscRegex {...props} />,
+  WholeWordIcon: (props: Props) => <VscWholeWord {...props} />,
+  ArrowUpIcon: (props: Props) => <ArrowUpIcon {...props} />,
+  ArrowDownIcon: (props: Props) => <ArrowDownIcon {...props} />,
 
   Javascript: (props: Props) => (
     <IconShellSolid {...props}>

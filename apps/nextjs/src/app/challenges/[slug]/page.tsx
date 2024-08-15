@@ -10,9 +10,14 @@ import {
   ResizablePanelGroup,
 } from "@codeconnect/ui/resizable";
 import { Separator } from "@codeconnect/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codeconnect/ui/tabs";
 
+import { Navbar } from "~/app/_components/navbar";
 import { api, HydrateClient } from "~/trpc/server";
-import ChallengeEditor from "./_components/editor/challenge-editor";
+import ChallengeEditor from "./_components/challenge-editor";
+import { VideoCallPanel } from "./_components/panels/videocall-panel";
+import { SideBar } from "./_components/sidebar";
+import { StatusBar } from "./_components/statusbar";
 
 // export const runtime = "edge"; // Cannot run on edge due to markdown parsing of mathematical expressions
 
@@ -28,54 +33,86 @@ export default async function ChallengePage({ params: { slug } }: Params) {
   if (!challenge) notFound();
   return (
     <HydrateClient>
-      <main className="flex-1 overflow-auto">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel minSize={20} defaultSize={40}>
-            <div className="flex h-full w-full flex-col">
-              <div
-                className={cn(
-                  "flex-1 overflow-auto",
-                  "scrollbar scrollbar-w-3",
-                )}
-              >
-                <header className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Badge
+      <main className="grid h-screen max-h-screen grid-cols-[max-content,auto] grid-rows-[max-content,auto,max-content] overflow-auto grid-areas-[sidebar_navbar,sidebar_editor,sidebar_statusbar]">
+        <SideBar />
+        <Navbar />
+        <div className="h-auto grid-in-[editor]">
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel minSize={20} defaultSize={40}>
+              <ResizablePanelGroup direction="vertical">
+                <ResizablePanel minSize={40} defaultSize={60}>
+                  <div className="flex h-full w-full flex-col">
+                    <div
                       className={cn(
-                        "uppercase",
-                        challenge.difficulty === "easy" && "bg-green-600",
-                        challenge.difficulty === "medium" && "bg-yellow-600",
-                        challenge.difficulty === "hard" && "bg-red-600",
+                        "flex-1 overflow-auto",
+                        "scrollbar scrollbar-w-3",
                       )}
                     >
-                      {challenge.difficulty}
-                    </Badge>
+                      <header className="flex flex-col gap-3 p-5">
+                        <div className="flex items-center gap-3">
+                          <Badge
+                            className={cn(
+                              "uppercase",
+                              challenge.difficulty === "easy" && "bg-green-600",
+                              challenge.difficulty === "medium" &&
+                                "bg-yellow-600",
+                              challenge.difficulty === "hard" && "bg-red-600",
+                            )}
+                          >
+                            {challenge.difficulty}
+                          </Badge>
 
-                    <h1 className="w-max text-2xl font-medium">
-                      {challenge.title}
-                    </h1>
+                          <h1 className="w-max text-xl font-medium">
+                            {challenge.title}
+                          </h1>
+                        </div>
+                        <div className="flex gap-5">
+                          <span className="flex items-center gap-2 text-sm capitalize">
+                            <icons.User className="size-4" />
+                            {challenge.author?.name}
+                          </span>
+                          <span className="flex items-center gap-2 text-sm capitalize">
+                            <icons.User className="size-4" />
+                            {challenge.author?.name}
+                          </span>
+                          <span className="flex items-center gap-2 text-sm capitalize">
+                            <icons.User className="size-4" />
+                            {challenge.author?.name}
+                          </span>
+                        </div>
+                      </header>
+                      <Separator />
+                      <div className="p-5">
+                        <Tabs defaultValue="instructions">
+                          <TabsList>
+                            <TabsTrigger value="instructions">
+                              Instructions
+                            </TabsTrigger>
+                            <TabsTrigger value="output">Output</TabsTrigger>
+                          </TabsList>
+
+                          <TabsContent value="instructions">
+                            <Markdown content={challenge.description} />
+                          </TabsContent>
+                          <TabsContent value="output">
+                            <div className="flex h-full w-full flex-col"></div>
+                          </TabsContent>
+                        </Tabs>
+                      </div>
+                    </div>
                   </div>
-
-                  <span className="flex items-center gap-2 capitalize">
-                    <icons.User className="size-4" />
-                    {challenge.author?.name}
-                  </span>
-                </header>
-                <Separator />
-                <div className="p-5">
-                  <Markdown content={challenge.description} />
-                </div>
-              </div>
-              <div className="box-border flex h-[350px] items-center justify-center border-t p-3">
-                <div className="aspect-square h-full bg-zinc-900"></div>
-              </div>
-            </div>
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel minSize={50} defaultSize={60}>
-            <ChallengeEditor challenge={challenge} />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+                </ResizablePanel>
+                <ResizableHandle />
+                <VideoCallPanel />
+              </ResizablePanelGroup>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel minSize={50} defaultSize={60}>
+              <ChallengeEditor challenge={challenge} />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+        <StatusBar />
       </main>
     </HydrateClient>
   );

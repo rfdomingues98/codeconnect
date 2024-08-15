@@ -23,6 +23,7 @@
     "@codeconnect/eslint-config": "workspace:*",
     "@codeconnect/prettier-config": "workspace:*",
     "@codeconnect/tsconfig": "workspace:*",
+    "@savvywombat/tailwindcss-grid-areas": "^4.0.0",
     "@tailwindcss/typography": "^0.5.13",
     "eslint": "catalog:",
     "prettier": "catalog:",
