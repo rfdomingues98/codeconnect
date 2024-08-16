@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   closeSearchPanel,
   findNext,
@@ -8,7 +8,7 @@ import {
   SearchQuery,
   setSearchQuery,
 } from "@codemirror/search";
-import { EditorView } from "@uiw/react-codemirror";
+import { EditorView, runScopeHandlers } from "@uiw/react-codemirror";
 import { createRoot } from "react-dom/client";
 
 import { cn } from "@codeconnect/ui";
@@ -18,17 +18,17 @@ import { Input } from "@codeconnect/ui/input";
 import { Toggle } from "@codeconnect/ui/toggle";
 
 function SearchPanel({ view }: { view: EditorView }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const initialSearchQuery = getSearchQuery(view.state);
-  const [search, setSearch] = useState(initialSearchQuery.search);
-  const [caseSensitive, setCaseSensitive] = useState(
-    initialSearchQuery.caseSensitive,
-  );
-  const [wholeWord, setWholeWord] = useState(initialSearchQuery.wholeWord);
-  const [regexp, setRegexp] = useState(initialSearchQuery.regexp);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const caseSensitiveRef = useRef<HTMLButtonElement>(null);
+  const wholeWordRef = useRef<HTMLButtonElement>(null);
+  const regexRef = useRef<HTMLButtonElement>(null);
+  const query = getSearchQuery(view.state);
+  /* const [query, setQuery] = useState(initialSearchQuery); */
+
   const handleClose = useCallback(() => {
     closeSearchPanel(view);
   }, [view]);
+
   const handleFindNext = () => {
     findNext(view);
   };
@@ -37,66 +37,83 @@ function SearchPanel({ view }: { view: EditorView }) {
   };
   const handleDocumentKeydown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleClose();
-    },
-    [handleClose],
-  );
-  const handleInputKeypress = useCallback(
-    (e: KeyboardEvent) => {
-      console.log({ e });
-      if (e.key === "Enter") findNext(view);
+      if (runScopeHandlers(view, e, "search-panel")) {
+        e.preventDefault();
+      } else if (e.key === "Enter" && e.target === searchRef.current) {
+        e.preventDefault();
+        (e.shiftKey ? findPrevious : findNext)(view);
+      } /* else if (e.key === "Enter" && e.target === this.replaceField) {
+      e.preventDefault();
+      replaceNext(this.view);
+    } */
     },
     [view],
   );
 
-  useEffect(() => {
-    const input = inputRef.current;
-    input?.focus();
-    document.addEventListener("keydown", handleDocumentKeydown);
-    input?.addEventListener("keypress", handleInputKeypress);
-    return () => {
-      document.removeEventListener("keydown", handleDocumentKeydown);
-      input?.removeEventListener("keypress", handleInputKeypress);
-    };
-  }, [handleDocumentKeydown, handleInputKeypress]);
+  const commit = useCallback(() => {
+    const newQuery = new SearchQuery({
+      search: searchRef.current?.value ?? "",
+      caseSensitive:
+        caseSensitiveRef.current?.dataset.state === "on" ? true : false,
+      regexp: regexRef.current?.dataset.state === "on" ? true : false,
+      wholeWord: wholeWordRef.current?.dataset.state === "on" ? true : false,
+      // replace,
+    });
+    if (!newQuery.eq(query)) {
+      /* setQuery(newQuery); */
+      view.dispatch({
+        effects: setSearchQuery.of(newQuery),
+      });
+    }
+  }, [query, view]);
 
   useEffect(() => {
-    const searchQuery = new SearchQuery({
-      search,
-      caseSensitive,
-      wholeWord,
-      regexp,
-    });
-    view.dispatch({
-      effects: setSearchQuery.of(searchQuery),
-    });
-    // selectMatches(view);
-  }, [caseSensitive, regexp, search, view, wholeWord]);
+    searchRef.current?.focus();
+    document.addEventListener("keydown", handleDocumentKeydown);
+    return () => {
+      document.removeEventListener("keydown", handleDocumentKeydown);
+    };
+  }, [handleDocumentKeydown]);
+
+  useEffect(() => {
+    commit();
+  }, [commit]);
+
   return (
     <div className="search-panel flex w-[480px] items-center justify-between gap-3 p-2 pl-6">
       <div className="flex items-center gap-3">
         <div className="relative mr-auto w-full flex-1">
           <Input
-            ref={inputRef}
+            ref={searchRef}
             placeholder="Search..."
             className="h-8 w-full rounded-none pr-[85px]"
             main-field="true"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            defaultValue={query.search}
+            onChange={commit}
           />
           <div className="absolute right-16 top-1 flex size-4 gap-0">
             <Toggle
+              ref={caseSensitiveRef}
               size="xs"
-              onPressedChange={(value) => {
-                setCaseSensitive(value);
-              }}
+              onPressedChange={commit}
+              defaultPressed={query.caseSensitive}
             >
               <icons.CaseSensitiveIcon className="size-4" />
             </Toggle>
-            <Toggle size="xs" onPressedChange={(value) => setWholeWord(value)}>
+            <Toggle
+              ref={wholeWordRef}
+              size="xs"
+              onPressedChange={commit}
+              defaultPressed={query.wholeWord}
+            >
               <icons.WholeWordIcon className="size-4" />
             </Toggle>
-            <Toggle size="xs" onPressedChange={(value) => setRegexp(value)}>
+            <Toggle
+              ref={regexRef}
+              size="xs"
+              onPressedChange={commit}
+              defaultPressed={query.regexp}
+            >
               <icons.RegExIcon className="size-4" />
             </Toggle>
           </div>
