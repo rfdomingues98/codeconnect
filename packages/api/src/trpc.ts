@@ -6,12 +6,13 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import type { Session } from "@codeconnect/auth";
-import { auth, validateToken } from "@codeconnect/auth";
-import { db } from "@codeconnect/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+
+import type { Session } from "@codeconnect/auth";
+import { auth, validateToken } from "@codeconnect/auth";
+import { db } from "@codeconnect/db/client";
 
 /**
  * Isomorphic Session getter for API requests

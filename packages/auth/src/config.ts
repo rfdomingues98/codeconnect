@@ -5,9 +5,10 @@ import type {
 } from "next-auth";
 import { skipCSRFCheck } from "@auth/core";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import Discord from "next-auth/providers/discord";
+
 import { db } from "@codeconnect/db/client";
 import { Account, Session, User } from "@codeconnect/db/schema";
-import Discord from "next-auth/providers/discord";
 
 import { env } from "../env";
 
