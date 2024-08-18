@@ -8,7 +8,8 @@ import { Button } from "@codeconnect/ui/button";
 import { icons } from "@codeconnect/ui/icons";
 import { ResizablePanel } from "@codeconnect/ui/resizable";
 
-import Editor from "../editor/Editor";
+import { CodeEditor } from "../codemirror/editor";
+import { files } from "../editor/constants";
 
 export function TestsPanel() {
   const testsRef = useRef<ImperativePanelHandle | null>(null);
@@ -53,8 +54,7 @@ export function TestsPanel() {
           <label htmlFor="comment" className="sr-only">
             Add your code
           </label>
-          {/* <CodeEditor initialCode={files["index.test.ts"].value} /> */}
-          <Editor fileName="index.test.ts" key="tests-editor" />
+          <CodeEditor initialCode={files["index.test.ts"].value} />
         </div>
       </div>
     </ResizablePanel>

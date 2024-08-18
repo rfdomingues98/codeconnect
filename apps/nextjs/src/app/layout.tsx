@@ -10,8 +10,9 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
+import { EditorStoreProvider } from "@codeconnect/editor";
+
 import { env } from "~/env";
-import { EditorStoreProvider } from "~/providers/editor-store-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(

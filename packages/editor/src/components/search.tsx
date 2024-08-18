@@ -23,7 +23,6 @@ function SearchPanel({ view }: { view: EditorView }) {
   const wholeWordRef = useRef<HTMLButtonElement>(null);
   const regexRef = useRef<HTMLButtonElement>(null);
   const query = getSearchQuery(view.state);
-  /* const [query, setQuery] = useState(initialSearchQuery); */
 
   const handleClose = useCallback(() => {
     closeSearchPanel(view);

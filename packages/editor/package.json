@@ -1,0 +1,47 @@
+{
+  "name": "@codeconnect/editor",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": "./src/*.tsx"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "tsc --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@codeconnect/ui": "workspace:*",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@replit/codemirror-emacs": "^6.1.0",
+    "@replit/codemirror-vim": "^6.2.1",
+    "@replit/codemirror-vscode-keymap": "^6.0.2",
+    "@uiw/codemirror-theme-tokyo-night": "^4.23.0",
+    "@uiw/codemirror-theme-tokyo-night-day": "^4.23.0",
+    "@uiw/codemirror-theme-tokyo-night-storm": "^4.23.0",
+    "@uiw/react-codemirror": "^4.23.0",
+    "thememirror": "^2.0.1",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@codeconnect/eslint-config": "workspace:*",
+    "@codeconnect/prettier-config": "workspace:*",
+    "@codeconnect/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@codeconnect/prettier-config"
+}

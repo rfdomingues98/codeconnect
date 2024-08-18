@@ -1,3 +1,4 @@
+import { useEditorStore } from "@codeconnect/editor";
 import { Button } from "@codeconnect/ui/button";
 import {
   Popover,
@@ -8,7 +9,6 @@ import { Separator } from "@codeconnect/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@codeconnect/ui/toggle-group";
 
 import type { EditorMode, EditorTheme } from "~/stores/editor-store";
-import { useEditorStore } from "~/providers/editor-store-provider";
 import { defaultInitState } from "~/stores/editor-store";
 
 export function Settings() {
@@ -16,7 +16,9 @@ export function Settings() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">Settings</Button>
+        <Button size="sm" variant="outline">
+          Settings
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 space-y-4">
         <header>

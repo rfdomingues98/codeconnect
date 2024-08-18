@@ -13,6 +13,7 @@ const config = {
     "@codeconnect/api",
     "@codeconnect/auth",
     "@codeconnect/db",
+    "@codeconnect/editor",
     "@codeconnect/ui",
     "@codeconnect/validators",
   ],
