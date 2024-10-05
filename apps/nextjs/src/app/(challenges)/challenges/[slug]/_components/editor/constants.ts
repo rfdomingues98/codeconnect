@@ -129,3 +129,29 @@ export const files: Record<
     value: tsTestsCodeExample,
   },
 };
+export const files2: Array<{
+  name: string;
+  language: "typescript" | "css";
+  value: string;
+}> = [
+  {
+    name: "index.ts",
+    language: "typescript",
+    value: typescriptCodeExample,
+  },
+  {
+    name: "utils.ts",
+    language: "typescript",
+    value: utilsCodeExample,
+  },
+  {
+    name: "style.css",
+    language: "css",
+    value: cssCodeExample,
+  },
+  {
+    name: "index.test.ts",
+    language: "typescript",
+    value: tsTestsCodeExample,
+  },
+];

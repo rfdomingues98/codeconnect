@@ -1,0 +1,47 @@
+{
+  "name": "@codeconnect/canvas",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": "./src/*.tsx"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "tsc --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@codeconnect/ui": "workspace:*",
+    "@liveblocks/client": "^2.6.0",
+    "@liveblocks/node": "^2.6.0",
+    "@liveblocks/react": "^2.6.0",
+    "konva": "^9.3.14",
+    "next": "catalog:",
+    "perfect-freehand": "^1.2.2",
+    "react-konva": "^18.2.10",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@codeconnect/eslint-config": "workspace:*",
+    "@codeconnect/prettier-config": "workspace:*",
+    "@codeconnect/tailwind-config": "workspace:*",
+    "@codeconnect/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "tailwindcss": "^3.4.4",
+    "typescript": "catalog:"
+  },
+  "prettier": "@codeconnect/prettier-config"
+}

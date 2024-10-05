@@ -6,13 +6,15 @@ import {
   PopoverTrigger,
 } from "@codeconnect/ui/popover";
 import { Separator } from "@codeconnect/ui/separator";
+import { useTheme } from "@codeconnect/ui/theme";
 import { ToggleGroup, ToggleGroupItem } from "@codeconnect/ui/toggle-group";
 
 import type { EditorMode, EditorTheme } from "~/stores/editor-store";
 import { defaultInitState } from "~/stores/editor-store";
 
 export function Settings() {
-  const { mode, setMode, theme, setTheme } = useEditorStore((state) => state);
+  const { setTheme, theme } = useTheme();
+  const { mode, setMode } = useEditorStore((state) => state);
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -48,14 +50,14 @@ export function Settings() {
               id="theme"
               type="single"
               value={theme}
-              defaultValue={defaultInitState.theme}
+              defaultValue="light"
               onValueChange={(value) => {
                 if (value) setTheme(value as EditorTheme);
               }}
             >
               <ToggleGroupItem value="light">Light</ToggleGroupItem>
               <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
-              <ToggleGroupItem value="sync">Sync</ToggleGroupItem>
+              <ToggleGroupItem value="system">System</ToggleGroupItem>
             </ToggleGroup>
           </div>
         </div>

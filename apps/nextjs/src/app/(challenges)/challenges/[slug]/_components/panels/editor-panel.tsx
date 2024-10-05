@@ -11,8 +11,8 @@ import {
   ResizablePanelGroup,
 } from "@codeconnect/ui/resizable";
 
-import { CodeEditor } from "../codemirror/editor";
 import { REALISTIC_MOCK_TREE_DATA } from "../editor/constants";
+import Editor from "../editor/Editor";
 import { LanguageSelector } from "../editor/language-selector";
 import { Settings } from "../editor/settings";
 
@@ -53,7 +53,7 @@ export function EditorPanel({ initialCode }: Props) {
                     Format
                   </Button>
                   <Button size="sm" variant="outline">
-                    Test
+                    Run
                   </Button>
                   <Button size="sm" variant="primary">
                     Submit
@@ -64,12 +64,12 @@ export function EditorPanel({ initialCode }: Props) {
                 <label htmlFor="comment" className="sr-only">
                   Add your code
                 </label>
-                {/* <Editor
+                <Editor
                   fileName={content}
                   initialCode={initialCode}
                   key="code-editor"
-                /> */}
-                <CodeEditor initialCode={initialCode} />
+                />
+                {/*                 <CodeEditor initialCode={initialCode} /> */}
               </div>
             </div>
           </ResizablePanel>

@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { cn } from "@codeconnect/ui";
-import { Badge } from "@codeconnect/ui/badge";
 import { icons } from "@codeconnect/ui/icons";
 import Markdown from "@codeconnect/ui/markdown";
 import {
@@ -12,8 +11,8 @@ import {
 import { Separator } from "@codeconnect/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codeconnect/ui/tabs";
 
-import { Navbar } from "~/app/_components/navbar";
 import { api, HydrateClient } from "~/trpc/server";
+import { DifficultyBadge } from "../_components/difficulty-badge";
 import ChallengeEditor from "./_components/challenge-editor";
 import { VideoCallPanel } from "./_components/panels/videocall-panel";
 import { SideBar } from "./_components/sidebar";
@@ -33,9 +32,8 @@ export default async function ChallengePage({ params: { slug } }: Params) {
   if (!challenge) notFound();
   return (
     <HydrateClient>
-      <main className="grid h-screen max-h-screen grid-cols-[max-content,auto] grid-rows-[max-content,auto,max-content] overflow-auto grid-areas-[sidebar_navbar,sidebar_editor,sidebar_statusbar]">
+      <main className="grid h-screen max-h-screen grid-cols-[max-content,auto] grid-rows-[auto,2.4rem] overflow-auto grid-areas-[sidebar_editor,sidebar_statusbar]">
         <SideBar />
-        <Navbar />
         <div className="h-auto grid-in-[editor]">
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel minSize={20} defaultSize={40}>
@@ -50,17 +48,7 @@ export default async function ChallengePage({ params: { slug } }: Params) {
                     >
                       <header className="flex flex-col gap-3 p-5">
                         <div className="flex items-center gap-3">
-                          <Badge
-                            className={cn(
-                              "uppercase",
-                              challenge.difficulty === "easy" && "bg-green-600",
-                              challenge.difficulty === "medium" &&
-                                "bg-yellow-600",
-                              challenge.difficulty === "hard" && "bg-red-600",
-                            )}
-                          >
-                            {challenge.difficulty}
-                          </Badge>
+                          <DifficultyBadge difficulty={challenge.difficulty} />
 
                           <h1 className="w-max text-xl font-medium">
                             {challenge.title}

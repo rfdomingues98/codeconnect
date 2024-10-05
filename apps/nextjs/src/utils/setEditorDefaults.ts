@@ -1,8 +1,8 @@
 import type { Monaco } from "@monaco-editor/react";
 import type { Uri } from "monaco-editor";
 
-import type { FileName } from "~/app/challenges/[slug]/_components/editor/constants";
-import { files } from "~/app/challenges/[slug]/_components/editor/constants";
+import type { FileName } from "~/app/(challenges)/challenges/[slug]/_components/editor/constants";
+import { files } from "~/app/(challenges)/challenges/[slug]/_components/editor/constants";
 
 const libs = [
   {
@@ -12,6 +12,10 @@ const libs = [
   {
     name: "lodash",
     url: "https://unpkg.com/@types/lodash/index.d.ts",
+  },
+  {
+    name: "react",
+    url: "https://unpkg.com/@types/react@18.3.5/index.d.ts",
   },
 ];
 
@@ -27,16 +31,6 @@ export const fetchLibs = async () => {
     }),
   );
 };
-
-/* const libSource = [
-  "declare class Facts {",
-  "    static next():string",
-  "}",
-  "declare module 'dom-math' {",
-  "	declare function add(a: number, b: number): number",
-  "}",
-].join("\n");
-const libUri = "ts:filename/facts.d.ts"; */
 
 function getOrCreateModel(
   monaco: Monaco,
@@ -68,28 +62,12 @@ export const setEditorLibs = async (monaco: Monaco) => {
       file.value,
     );
   }
+
   const extraLibs = await fetchLibs();
   for (const extraLib of extraLibs) {
     monaco.languages.typescript.typescriptDefaults.addExtraLib(
       extraLib.content,
-      `file:///types/${extraLib.name}`,
-    );
-    if (
-      monaco.editor.getModel(monaco.Uri.parse(`file:///types/${extraLib.name}`))
-    )
-      continue;
-    getOrCreateModel(
-      monaco,
-      monaco.Uri.parse(`file:///types/${extraLib.name}`),
-      "tyescript",
-      extraLib.content,
+      `file:///node_modules/@types/${extraLib.name}/index.d.ts`,
     );
   }
-  /* monaco.editor.createModel(
-      extraLib.content,
-      "typescript",
-      monaco.Uri.parse(`ts:${extraLib.name}`),
-    ); */
-
-  /* monaco.languages.typescript.typescriptDefaults.addExtraLib(libSource, libUri); */
 };
