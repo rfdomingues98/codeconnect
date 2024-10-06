@@ -1,6 +1,13 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { z } from "zod";
 
-import { desc } from "@codeconnect/db";
+import {
+  and,
+  desc,
+  ilike,
+  inArray,
+  withCursorPagination,
+} from "@codeconnect/db";
 import { Challenges, DifficultyEnum } from "@codeconnect/db/schema";
 
 import { publicProcedure } from "../trpc";
@@ -16,7 +23,7 @@ export const challengeRouter = {
     .input(
       z.object({
         limit: z.number().min(1).max(100).nullish(),
-        cursor: z.number().nullish(),
+        cursor: z.string().nullish(),
 
         title: z.string().optional(),
         difficulty: z.array(z.enum(DifficultyEnum.enumValues)).optional(),
@@ -27,24 +34,56 @@ export const challengeRouter = {
     )
     .query(async ({ input, ctx }) => {
       const limit = input.limit ?? 20;
-      const cursor = input.cursor ?? 0;
+      const cursor = input.cursor;
       const { title, difficulty } = input;
+
+      let timestamp: string | undefined;
+      let id: string | undefined;
+      if (cursor) {
+        const split_cursor = cursor.split("_");
+        timestamp = split_cursor[0]!;
+        id = split_cursor[1]!;
+      }
+
       const items = await ctx.db.query.Challenges.findMany({
-        columns: { id: true, title: true, difficulty: true, slug: true },
-        limit: limit,
-        offset: cursor,
-        where: (challenge, { and, ilike, inArray }) =>
-          and(
-            title ? ilike(challenge.title, `%${title}%`) : undefined,
+        ...withCursorPagination({
+          limit: limit,
+          cursors: [
+            [
+              Challenges.createdAt,
+              "desc",
+              cursor ? new Date(timestamp!) : undefined,
+            ],
+            [Challenges.id, "asc", cursor ? id : undefined],
+          ],
+          where: and(
+            title ? ilike(Challenges.title, `%${title}%`) : undefined,
             difficulty && difficulty.length > 0
-              ? inArray(challenge.difficulty, difficulty)
+              ? inArray(Challenges.difficulty, difficulty)
               : undefined,
           ),
+        }),
+        orderBy: [desc(Challenges.createdAt)],
+        columns: {
+          id: true,
+          title: true,
+          difficulty: true,
+          slug: true,
+          createdAt: true,
+        },
       });
+
+      let nextCursor: string | null = null;
+      if (items.length >= limit) {
+        const lastItem = items.at(-1);
+        nextCursor = lastItem
+          ? `${lastItem.createdAt.toISOString()}_${lastItem.id}`
+          : null;
+      }
 
       return {
         data: items,
-        nextOffset: cursor + items.length,
+        nextCursor,
       };
     }),
   byId: publicProcedure

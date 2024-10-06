@@ -27,8 +27,8 @@ export default function ChallengesPage() {
     },
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage.data.length < 10) return undefined;
-        return lastPage.nextOffset;
+        // if (lastPage.data.length < 10) return undefined;
+        return lastPage.nextCursor;
       },
     },
   );
