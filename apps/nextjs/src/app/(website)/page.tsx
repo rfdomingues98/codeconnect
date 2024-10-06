@@ -7,7 +7,7 @@ import { Input } from "@codeconnect/ui/input";
 
 import { HydrateClient } from "~/trpc/server";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 export default function HomePage() {
   return (
