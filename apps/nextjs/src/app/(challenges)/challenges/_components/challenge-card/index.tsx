@@ -9,25 +9,23 @@ import { ChallengeTags } from "./tags";
 
 interface Props {
   challenge: RouterOutputs["challenge"]["getInfinite"]["data"][number];
-  index?: number;
 }
 
-export function ChallengeCard({ challenge, index }: Props) {
+export function ChallengeCard({ challenge }: Props) {
   return (
     <Card className="rounded-lg">
-      <Link href={`/challenges/${challenge.slug}`}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <DifficultyBadge difficulty={challenge.difficulty} />
-            {index}
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3">
+          <DifficultyBadge difficulty={challenge.difficulty} />
+          <Link href={`/challenges/${challenge.slug}`}>
             <span>{challenge.title}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ChallengeStats />
-          <ChallengeTags />
-        </CardContent>
-      </Link>
+          </Link>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChallengeStats />
+        <ChallengeTags />
+      </CardContent>
     </Card>
   );
 }

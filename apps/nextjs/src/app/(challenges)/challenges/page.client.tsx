@@ -68,12 +68,8 @@ export default function ChallengesPage() {
     >
       {data?.pages
         .flatMap((page) => page.data)
-        .map((challenge, index) => (
-          <ChallengeCard
-            key={challenge.id}
-            challenge={challenge}
-            index={index + 1}
-          />
+        .map((challenge) => (
+          <ChallengeCard key={challenge.id} challenge={challenge} />
         ))}
       {isFetching && <ChallengeCardSkeleton count={2} />}
       <div ref={loader} className="h-10" />
