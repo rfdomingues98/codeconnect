@@ -18,6 +18,7 @@ export const env = createEnv({
    */
   server: {
     POSTGRES_URL: z.string().url(),
+    LIVEBLOCKS_SECRET_KEY: z.string().min(1),
   },
 
   /**

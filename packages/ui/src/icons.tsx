@@ -24,6 +24,7 @@ import {
   VideoCameraSlashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { LoaderIcon } from "lucide-react";
 import { VscCaseSensitive, VscRegex, VscWholeWord } from "react-icons/vsc";
 
 type Props = ComponentProps<typeof PlayIcon>;
@@ -95,6 +96,7 @@ export const icons = {
   ExclamationTriangleIcon: (props: Props) => (
     <ExclamationTriangleIcon {...props} />
   ),
+  Spinner: (props: Props) => <LoaderIcon {...props} />,
 
   Javascript: (props: Props) => (
     <IconShellSolid {...props}>

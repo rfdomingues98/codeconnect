@@ -134,6 +134,11 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     },
     ref,
   ) => {
+    const handleLeafClick = React.useCallback(
+      (item: TreeDataItem) => () => handleSelectChange(item),
+      [handleSelectChange],
+    );
+
     return (
       <div ref={ref} role="tree" className={className} {...props}>
         <ul>
@@ -152,7 +157,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                           selectedItemId === item.id &&
                             "text-accent-foreground before:border-l-2 before:border-l-accent-foreground/50 before:bg-accent before:opacity-100 dark:before:border-0",
                         )}
-                        onClick={() => handleSelectChange(item)}
+                        onClick={handleLeafClick(item)}
                       >
                         {item.icon && (
                           <item.icon
@@ -184,7 +189,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                   <Leaf
                     item={item}
                     isSelected={selectedItemId === item.id}
-                    onClick={() => handleSelectChange(item)}
+                    onClick={handleLeafClick(item)}
                     Icon={ItemIcon}
                   />
                 )}
@@ -195,7 +200,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
               <Leaf
                 item={data}
                 isSelected={selectedItemId === data.id}
-                onClick={() => handleSelectChange(data)}
+                onClick={handleLeafClick(data)}
                 Icon={ItemIcon}
               />
             </li>
@@ -245,21 +250,33 @@ const Leaf = React.forwardRef<
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header>
-    <AccordionPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        "flex w-full flex-1 items-center py-2 transition-all last:[&[data-state=open]>svg]:rotate-90",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      <icons.ChevronRightIcon className="ml-auto h-4 w-4 shrink-0 text-accent-foreground/50 transition-transform duration-200" />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-));
+>(({ className, children, ...props }, ref) => {
+  const handleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (props.onClick) {
+        props.onClick(event);
+      }
+    },
+    [props],
+  );
+
+  return (
+    <AccordionPrimitive.Header>
+      <AccordionPrimitive.Trigger
+        ref={ref}
+        className={cn(
+          "flex w-full flex-1 items-center py-2 transition-all last:[&[data-state=open]>svg]:rotate-90",
+          className,
+        )}
+        onClick={handleClick}
+        {...props}
+      >
+        {children}
+        <icons.ChevronRightIcon className="ml-auto h-4 w-4 shrink-0 text-accent-foreground/50 transition-transform duration-200" />
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  );
+});
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
 const AccordionContent = React.forwardRef<

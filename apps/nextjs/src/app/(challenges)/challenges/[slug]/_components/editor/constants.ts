@@ -129,11 +129,11 @@ export const files: Record<
     value: tsTestsCodeExample,
   },
 };
-export const files2: Array<{
+export const files2: {
   name: string;
   language: "typescript" | "css";
   value: string;
-}> = [
+}[] = [
   {
     name: "index.ts",
     language: "typescript",

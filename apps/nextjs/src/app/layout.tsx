@@ -3,16 +3,12 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@codeconnect/ui";
-import { ThemeProvider } from "@codeconnect/ui/theme";
 import { Toaster } from "@codeconnect/ui/toast";
-
-import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
-import { EditorStoreProvider } from "@codeconnect/editor";
-
 import { env } from "~/env";
+import { Providers } from "~/providers";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -56,12 +52,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           GeistMono.variable,
         )}
       >
-        <ThemeProvider attribute="class" enableSystem>
-          <TRPCReactProvider>
-            <EditorStoreProvider>{props.children}</EditorStoreProvider>
-          </TRPCReactProvider>
+        <Providers>
+          {props.children}
           <Toaster />
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
