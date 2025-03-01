@@ -1,4 +1,3 @@
-import type { RouterOutputs } from "@codeconnect/api";
 import {
   ResizableHandle,
   ResizablePanelGroup,
@@ -7,15 +6,11 @@ import {
 import { EditorPanel } from "./panels/editor-panel";
 import { TestsPanel } from "./panels/tests-panel";
 
-export default function ChallengeEditor({
-  challenge,
-}: {
-  challenge: NonNullable<RouterOutputs["challenge"]["bySlug"]>;
-}) {
+export default function ChallengeEditor() {
   return (
     <>
       <ResizablePanelGroup direction="vertical">
-        <EditorPanel initialCode={challenge.initialCode} />
+        <EditorPanel />
         <ResizableHandle />
         <TestsPanel />
       </ResizablePanelGroup>

@@ -106,6 +106,13 @@ export const challengeRouter = {
     .query(({ ctx, input }) => {
       return ctx.db.query.Challenges.findFirst({
         where: (challenge, { eq }) => eq(challenge.slug, input.slug),
+        columns: {
+          id: true,
+          title: true,
+          description: true,
+          difficulty: true,
+          slug: true,
+        },
         with: {
           author: {
             columns: {
@@ -113,6 +120,27 @@ export const challengeRouter = {
               name: true,
             },
           },
+          languages: {
+            columns: {
+              initialCode: true,
+            },
+            with: {
+              language: {
+                columns: {
+                  name: true,
+                  slug: true,
+                  logoUrl: true,
+                },
+              },
+            },
+          },
+          outputTests: true,
+          performanceTests: true,
+          tags: true,
+          ratings: true,
+          submissions: true /* {
+            where: (submission, { eq }) => { ctx.session ? eq(submission.userId, ctx.session.user.id) :  }
+          } */
         },
       });
     }),

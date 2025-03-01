@@ -33,6 +33,29 @@ export const CreatePostSchema = createInsertSchema(Post, {
   updatedAt: true,
 }); */
 
+// Programming Languages table to store all supported languages
+export const ProgrammingLanguages = pgTable("programming_languages", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  slug: varchar("slug", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  version: varchar("version", { length: 50 }),
+  description: text("description"),
+  logoUrl: varchar("logoUrl", { length: 255 }),
+  isActive: boolean("isActive").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+});
+
+export const ProgrammingLanguagesRelations = relations(ProgrammingLanguages, ({ many }) => ({
+  challengeLanguages: many(ChallengeLanguages),
+  outputTests: many(OutputTests),
+  performanceTests: many(PerformanceTests),
+  submissions: many(ChallengeSubmissions),
+}));
+
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }),
@@ -102,7 +125,6 @@ export const Challenges = pgTable("challenges", {
   slug: varchar("slug", { length: 256 }).notNull().unique(),
   title: varchar("title", { length: 256 }).notNull(),
   description: text("description").notNull(),
-  initialCode: text("initialCode").notNull(),
   authorId: uuid("authorId").references(() => User.id, {
     onDelete: "set null",
   }),
@@ -117,11 +139,35 @@ export const Challenges = pgTable("challenges", {
 
 export const ChallengeRelations = relations(Challenges, ({ one, many }) => ({
   author: one(User, { fields: [Challenges.authorId], references: [User.id] }),
+  languages: many(ChallengeLanguages),
   outputTests: many(OutputTests),
   performanceTests: many(PerformanceTests),
   tags: many(ChallengeTags),
   submissions: many(ChallengeSubmissions),
   ratings: many(ChallengeRatings),
+}));
+
+// New table to store language-specific initial code for challenges
+export const ChallengeLanguages = pgTable("challenge_languages", {
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id, { onDelete: "cascade" }),
+  languageId: uuid("languageId")
+    .notNull()
+    .references(() => ProgrammingLanguages.id, { onDelete: "cascade" }),
+  initialCode: text("initialCode").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+}, (table) => ({
+  uniqueChallengeLanguage: primaryKey({ columns: [table.challengeId, table.languageId] }),
+}));
+
+export const ChallengeLanguagesRelations = relations(ChallengeLanguages, ({ one }) => ({
+  challenge: one(Challenges, { fields: [ChallengeLanguages.challengeId], references: [Challenges.id] }),
+  language: one(ProgrammingLanguages, { fields: [ChallengeLanguages.languageId], references: [ProgrammingLanguages.id] }),
 }));
 
 export const OutputTests = pgTable("output_tests", {
@@ -131,12 +177,19 @@ export const OutputTests = pgTable("output_tests", {
   challengeId: uuid("challengeId")
     .notNull()
     .references(() => Challenges.id),
+  languageId: uuid("languageId")
+    .notNull()
+    .references(() => ProgrammingLanguages.id),
 });
 
 export const OutputTestsRelations = relations(OutputTests, ({ one }) => ({
   challenge: one(Challenges, {
     fields: [OutputTests.challengeId],
     references: [Challenges.id],
+  }),
+  language: one(ProgrammingLanguages, {
+    fields: [OutputTests.languageId],
+    references: [ProgrammingLanguages.id],
   }),
 }));
 
@@ -147,6 +200,9 @@ export const PerformanceTests = pgTable("performance_tests", {
   challengeId: uuid("challengeId")
     .notNull()
     .references(() => Challenges.id),
+  languageId: uuid("languageId")
+    .notNull()
+    .references(() => ProgrammingLanguages.id),
 });
 
 export const PerformanceTestsRelations = relations(
@@ -155,6 +211,10 @@ export const PerformanceTestsRelations = relations(
     challenge: one(Challenges, {
       fields: [PerformanceTests.challengeId],
       references: [Challenges.id],
+    }),
+    language: one(ProgrammingLanguages, {
+      fields: [PerformanceTests.languageId],
+      references: [ProgrammingLanguages.id],
     }),
   }),
 );
@@ -168,6 +228,9 @@ export const ChallengeSubmissions = pgTable("challenge_submissions", {
   challengeId: uuid("challengeId")
     .notNull()
     .references(() => Challenges.id, { onDelete: "cascade" }),
+  languageId: uuid("languageId")
+    .notNull()
+    .references(() => ProgrammingLanguages.id, { onDelete: "cascade" }),
   code: text("code").notNull(),
   status: SubmissionStatusEnum("status").notNull(),
   executionTime: integer("executionTime"), // in milliseconds
@@ -178,10 +241,12 @@ export const ChallengeSubmissions = pgTable("challenge_submissions", {
 export const ChallengeSubmissionsRelations = relations(ChallengeSubmissions, ({ one }) => ({
   user: one(User, { fields: [ChallengeSubmissions.userId], references: [User.id] }),
   challenge: one(Challenges, { fields: [ChallengeSubmissions.challengeId], references: [Challenges.id] }),
+  language: one(ProgrammingLanguages, { fields: [ChallengeSubmissions.languageId], references: [ProgrammingLanguages.id] }),
 }));
 
 export const Tags = pgTable("tags", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
+  slug: varchar("slug", { length: 50 }).notNull().unique(),
   name: varchar("name", { length: 50 }).notNull().unique(),
   description: text("description"),
 });
@@ -212,6 +277,9 @@ export const UserProgress = pgTable("user_progress", {
   challengeId: uuid("challengeId")
     .notNull()
     .references(() => Challenges.id, { onDelete: "cascade" }),
+  languageId: uuid("languageId")
+    .notNull()
+    .references(() => ProgrammingLanguages.id, { onDelete: "cascade" }),
   status: ProgressStatusEnum("status").notNull(),
   bestSubmissionId: uuid("bestSubmissionId").references(() => ChallengeSubmissions.id),
   updatedAt: timestamp("updatedAt", {
@@ -219,12 +287,13 @@ export const UserProgress = pgTable("user_progress", {
     withTimezone: true,
   }).$onUpdateFn(() => sql`now()`),
 }, (table) => ({
-  uniqueUserChallenge: primaryKey({ columns: [table.userId, table.challengeId] }),
+  uniqueUserChallengeLanguage: primaryKey({ columns: [table.userId, table.challengeId, table.languageId] }),
 }));
 
 export const UserProgressRelations = relations(UserProgress, ({ one }) => ({
   user: one(User, { fields: [UserProgress.userId], references: [User.id] }),
   challenge: one(Challenges, { fields: [UserProgress.challengeId], references: [Challenges.id] }),
+  language: one(ProgrammingLanguages, { fields: [UserProgress.languageId], references: [ProgrammingLanguages.id] }),
   bestSubmission: one(ChallengeSubmissions, { fields: [UserProgress.bestSubmissionId], references: [ChallengeSubmissions.id] }),
 }));
 

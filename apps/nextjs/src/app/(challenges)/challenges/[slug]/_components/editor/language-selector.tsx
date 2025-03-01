@@ -1,4 +1,5 @@
-import { icons } from "@codeconnect/ui/icons";
+import Image from "next/image";
+
 import {
   Select,
   SelectContent,
@@ -7,20 +8,38 @@ import {
   SelectValue,
 } from "@codeconnect/ui/select";
 
+import { useCurrentChallenge } from "~/contexts/challenge";
+import { api } from "~/trpc/react";
+
 export function LanguageSelector() {
+  const challenge = useCurrentChallenge();
+  const [languages] = api.programmingLanguage.allByChallengeId.useSuspenseQuery(
+    {
+      challengeId: challenge.id,
+    },
+  );
+
   return (
     <Select>
       <SelectTrigger className="h-8 w-[160px]">
         <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent className="max-h-48">
-        <SelectItem value="js">
-          <span className="flex items-center gap-3">
-            <icons.Javascript className="size-4" />
-            Javascript
-          </span>
-        </SelectItem>
-        <SelectItem value="ts">
+        {languages.map((language) => (
+          <SelectItem key={language.slug} value={language.slug}>
+            <span className="flex items-center gap-3">
+              {/* <icons.Javascript className="size-4" /> */}
+              <Image
+                src={language.logoUrl ?? ""}
+                alt={language.name}
+                width={16}
+                height={16}
+              />
+              {language.name}
+            </span>
+          </SelectItem>
+        ))}
+        {/* <SelectItem value="ts">
           <span className="flex items-center gap-3">
             <icons.Typescript className="size-4" />
             Typescript
@@ -60,7 +79,7 @@ export function LanguageSelector() {
             <icons.Scala className="size-4" />
             Scala
           </span>
-        </SelectItem>
+        </SelectItem> */}
       </SelectContent>
     </Select>
   );

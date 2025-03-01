@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useQueryStates } from "nuqs";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -13,8 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codeconnect/ui/select";
+import { Skeleton } from "@codeconnect/ui/skeleton";
 
 import { filtersParsers } from "../../searchParams";
+import { TagPicker } from "./tag-picker";
 
 export function FilterCard() {
   const [filters, setFilters] = useQueryStates(filtersParsers);
@@ -39,17 +42,12 @@ export function FilterCard() {
           defaultValue={filters.title}
           onChange={(e) => handleSearchChange(e.target.value)}
         />
-        <MultiSelect
-          defaultValue={filters.tag}
-          onValueChange={(value) => handleFilterChange("tag", value)}
-          options={[
-            { value: "array", label: "Array" },
-            { value: "string", label: "String" },
-            { value: "dynamic-programming", label: "Dynamic Programming" },
-            { value: "graph", label: "Graph" },
-          ]}
-          placeholder="Select tags"
-        />
+        <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+          <TagPicker
+            defaultValue={filters.tag}
+            onChange={(value) => handleFilterChange("tag", value)}
+          />
+        </Suspense>
         <MultiSelect
           defaultValue={filters.difficulty}
           onValueChange={(value) => handleFilterChange("difficulty", value)}

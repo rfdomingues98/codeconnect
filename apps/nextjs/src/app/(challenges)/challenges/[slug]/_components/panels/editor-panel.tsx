@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import { Button } from "@codeconnect/ui/button";
 import { Tree } from "@codeconnect/ui/file-tree";
@@ -10,18 +10,18 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@codeconnect/ui/resizable";
+import { Skeleton } from "@codeconnect/ui/skeleton";
 
+import { useCurrentChallenge } from "~/contexts/challenge";
 import { REALISTIC_MOCK_TREE_DATA } from "../editor/constants";
 import Editor from "../editor/Editor";
 import { LanguageSelector } from "../editor/language-selector";
 import { Settings } from "../editor/settings";
 
-interface Props {
-  initialCode: string;
-}
 type FileName = "index.ts" | "styles.css";
-export function EditorPanel({ initialCode }: Props) {
+export function EditorPanel() {
   const [content, setContent] = useState<FileName>("index.ts");
+  const challenge = useCurrentChallenge();
 
   return (
     <>
@@ -47,7 +47,9 @@ export function EditorPanel({ initialCode }: Props) {
                   <span>{content}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <LanguageSelector />
+                  <Suspense fallback={<Skeleton className="h-8 w-24" />}>
+                    <LanguageSelector />
+                  </Suspense>
                   <Settings />
                   <Button size="sm" variant="outline">
                     Format
@@ -66,8 +68,9 @@ export function EditorPanel({ initialCode }: Props) {
                 </label>
                 <Editor
                   fileName={content}
-                  initialCode={initialCode}
+                  initialCode={challenge.languages[0]?.initialCode}
                   key="code-editor"
+                  value={challenge.languages[0]?.initialCode}
                 />
                 {/*                 <CodeEditor initialCode={initialCode} /> */}
               </div>

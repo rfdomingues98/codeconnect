@@ -27,6 +27,7 @@ export default function Editor({
 
   const { resolvedTheme } = useTheme();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  console.log({ initialCode: props.initialCode });
 
   const file = files[fileName];
 
