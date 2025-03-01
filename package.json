@@ -12,6 +12,7 @@
     "db:push": "turbo -F @codeconnect/db push",
     "db:studio": "turbo -F @codeconnect/db studio",
     "db:diagram": "turbo -F @codeconnect/db diagram",
+    "db:seed": "turbo -F @codeconnect/db seed",
     "dev": "turbo watch dev",
     "dev:next": "turbo watch dev -F @codeconnect/nextjs...",
     "dev:api": "turbo watch dev -F @codeconnect/challenge-api...",
@@ -28,7 +29,7 @@
   },
   "devDependencies": {
     "@codeconnect/prettier-config": "workspace:*",
-    "@turbo/gen": "^2.0.8",
+    "@turbo/gen": "^2.1.1",
     "prettier": "catalog:",
     "tsx": "^4.7.1",
     "turbo": "^2.1.1",

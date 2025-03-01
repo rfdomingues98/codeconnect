@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -10,9 +11,8 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
 
+/* 
 export const Post = pgTable("post", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   title: varchar("name", { length: 256 }).notNull(),
@@ -31,7 +31,7 @@ export const CreatePostSchema = createInsertSchema(Post, {
   id: true,
   createdAt: true,
   updatedAt: true,
-});
+}); */
 
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -47,6 +47,7 @@ export const User = pgTable("user", {
 export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
   challenges: many(Challenges),
+  ratings: many(ChallengeRatings),
 }));
 
 export const Account = pgTable(
@@ -117,6 +118,10 @@ export const Challenges = pgTable("challenges", {
 export const ChallengeRelations = relations(Challenges, ({ one, many }) => ({
   author: one(User, { fields: [Challenges.authorId], references: [User.id] }),
   outputTests: many(OutputTests),
+  performanceTests: many(PerformanceTests),
+  tags: many(ChallengeTags),
+  submissions: many(ChallengeSubmissions),
+  ratings: many(ChallengeRatings),
 }));
 
 export const OutputTests = pgTable("output_tests", {
@@ -154,4 +159,115 @@ export const PerformanceTestsRelations = relations(
   }),
 );
 
-// export const ChallengeSubmissions = pgTable("challenge_submissions", {});
+export const SubmissionStatusEnum = pgEnum("submission_status", ["passed", "failed", "error", "timeout"]);
+export const ChallengeSubmissions = pgTable("challenge_submissions", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id, { onDelete: "cascade" }),
+  code: text("code").notNull(),
+  status: SubmissionStatusEnum("status").notNull(),
+  executionTime: integer("executionTime"), // in milliseconds
+  memory: integer("memory"), // in KB
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const ChallengeSubmissionsRelations = relations(ChallengeSubmissions, ({ one }) => ({
+  user: one(User, { fields: [ChallengeSubmissions.userId], references: [User.id] }),
+  challenge: one(Challenges, { fields: [ChallengeSubmissions.challengeId], references: [Challenges.id] }),
+}));
+
+export const Tags = pgTable("tags", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  name: varchar("name", { length: 50 }).notNull().unique(),
+  description: text("description"),
+});
+
+export const ChallengeTags = pgTable("challenge_tags", {
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id, { onDelete: "cascade" }),
+  tagId: uuid("tagId")
+    .notNull()
+    .references(() => Tags.id, { onDelete: "cascade" }),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.challengeId, table.tagId] }),
+}));
+
+export const ChallengeTagsRelations = relations(ChallengeTags, ({ one }) => ({
+  challenge: one(Challenges, { fields: [ChallengeTags.challengeId], references: [Challenges.id] }),
+  tag: one(Tags, { fields: [ChallengeTags.tagId], references: [Tags.id] }),
+}));
+
+export const ProgressStatusEnum = pgEnum("progress_status", ["completed", "attempted", "bookmarked"]);
+
+export const UserProgress = pgTable("user_progress", {
+  id: uuid("id").notNull().unique().defaultRandom(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id, { onDelete: "cascade" }),
+  status: ProgressStatusEnum("status").notNull(),
+  bestSubmissionId: uuid("bestSubmissionId").references(() => ChallengeSubmissions.id),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+}, (table) => ({
+  uniqueUserChallenge: primaryKey({ columns: [table.userId, table.challengeId] }),
+}));
+
+export const UserProgressRelations = relations(UserProgress, ({ one }) => ({
+  user: one(User, { fields: [UserProgress.userId], references: [User.id] }),
+  challenge: one(Challenges, { fields: [UserProgress.challengeId], references: [Challenges.id] }),
+  bestSubmission: one(ChallengeSubmissions, { fields: [UserProgress.bestSubmissionId], references: [ChallengeSubmissions.id] }),
+}));
+
+export const TestTypeEnum = pgEnum("test_type", ["output", "performance"]);
+
+export const TestResults = pgTable("test_results", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  submissionId: uuid("submissionId")
+    .notNull()
+    .references(() => ChallengeSubmissions.id, { onDelete: "cascade" }),
+  testId: uuid("testId").notNull(), // Generic reference to either output or performance test
+  testType: TestTypeEnum("testType").notNull(),
+  passed: boolean("passed").notNull(),
+  actualOutput: text("actualOutput"),
+  actualTime: integer("actualTime"), // For performance tests
+  errorMessage: text("errorMessage"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const TestResultsRelations = relations(TestResults, ({ one }) => ({
+  submission: one(ChallengeSubmissions, { fields: [TestResults.submissionId], references: [ChallengeSubmissions.id] }),
+}));
+
+export const ChallengeRatings = pgTable("challenge_ratings", {
+  id: uuid("id").notNull().unique().defaultRandom(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  challengeId: uuid("challengeId")
+    .notNull()
+    .references(() => Challenges.id, { onDelete: "cascade" }),
+  rating: integer("rating").notNull(), // 1-5 stars
+  comment: text("comment"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+}, (table) => ({
+  uniqueUserRating: primaryKey({ columns: [table.userId, table.challengeId] }),
+}));
+
+export const ChallengeRatingsRelations = relations(ChallengeRatings, ({ one }) => ({
+  user: one(User, { fields: [ChallengeRatings.userId], references: [User.id] }),
+  challenge: one(Challenges, { fields: [ChallengeRatings.challengeId], references: [Challenges.id] }),
+}));

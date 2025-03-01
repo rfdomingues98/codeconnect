@@ -25,7 +25,6 @@
     "@liveblocks/node": "^2.8.2",
     "@liveblocks/react": "^2.8.2",
     "@liveblocks/react-ui": "^2.8.2",
-    "@million/lint": "^1.0.9",
     "@monaco-editor/react": "^4.6.0",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "catalog:",

@@ -28,7 +28,8 @@
     "studio": "pnpm with-env drizzle-kit studio",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --",
-    "diagram": "node --experimental-specifier-resolution=node --loader ts-node/esm ./src/dbml.ts"
+    "diagram": "node --experimental-specifier-resolution=node --loader ts-node/esm ./src/dbml.ts",
+    "seed": "pnpm with-env node --experimental-specifier-resolution=node --loader ts-node/esm ./src/seed-script.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.10.1",

@@ -1,4 +1,3 @@
-import MillionLint from "@million/lint";
 import { fileURLToPath } from "url";
 import createJiti from "jiti";
 
@@ -41,6 +40,4 @@ const config = {
   },
 };
 
-export default MillionLint.next({
-  rsc: true
-})(config);
+export default config;

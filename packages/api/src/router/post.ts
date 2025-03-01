@@ -1,4 +1,4 @@
-import type { TRPCRouterRecord } from "@trpc/server";
+/* import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@codeconnect/db";
@@ -38,3 +38,4 @@ export const postRouter = {
     return ctx.db.delete(Post).where(eq(Post.id, input));
   }),
 } satisfies TRPCRouterRecord;
+ */
